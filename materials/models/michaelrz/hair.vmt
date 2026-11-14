@@ -1,0 +1,6 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/MichaelRZ/hair"
+	"$alphatest" 1
+	"$nocull" 1
+}
