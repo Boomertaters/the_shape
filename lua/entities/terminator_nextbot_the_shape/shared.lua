@@ -89,9 +89,10 @@ end
 function ENT:OnKilled( dmginfo )
 	local class = self:GetClass()
 	local creator = self:GetCreator()
+	local spawnEntry = self.glee_SpawnEntry or { class = class, isBoss = true }
 
 	self:SetShouldServerRagdoll( true )
-    local ragdoll = self:BecomeRagdoll( dmginfo )
+	local ragdoll = self:BecomeRagdoll( dmginfo )
 	if not IsValid( ragdoll ) then return end
 
 	ragdoll.glee_isTheShapeRagdoll = true -- for glee, so it doesn't spawn another shape
@@ -109,16 +110,24 @@ function ENT:OnKilled( dmginfo )
 		local waiting = not tr.Hit or moving or ragdoll:IsOnFire() or ragdoll:IsPlayerHolding()
 		if waiting then return timer.Simple( 2, getUp ) end
 
-		local shape = ents.Create( class )
-		shape:SetPos( tr.HitPos + Vector( 0, 0, 5 ) )
-		shape:SetAngles( Angle( 0, IsValid( phys ) and phys:GetAngles().y or 0, 0 ) )
-		shape:SetCreator( creator )
-		shape:Spawn()
+		local spawnPos = tr.HitPos + Vector( 0, 0, 5 )
+		local spawnAng = Angle( 0, IsValid( phys ) and phys:GetAngles().y or 0, 0 )
+		local shape
 
-		if GAMEMODE.IsReallyHuntersGlee and isfunction( GAMEMODE.RegisterBoss ) then
-		   GAMEMODE:RegisterBoss( shape )
+		if GAMEMODE.IsReallyHuntersGlee and GAMEMODE.SpawnAndSetupSpawnEntry then
+			shape = GAMEMODE:SpawnAndSetupSpawnEntry( spawnEntry, { spawnPos = spawnPos, spawnAng = spawnAng } )
+
+		else
+			shape = ents.Create( class )
+			shape:SetPos( spawnPos )
+			shape:SetAngles( spawnAng )
+			shape:Spawn()
+
 		end
 
+		if not IsValid( shape ) then return end
+
+		shape:SetCreator( creator )
 		addUndo( shape, creator )
 
 		timer.Simple( 0, function()
