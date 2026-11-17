@@ -95,7 +95,8 @@ function ENT:OnKilled( dmginfo )
 	local class = self:GetClass()
 	local creator = self:GetCreator()
 	local spawnEntry = self.glee_SpawnEntry or { class = class, isBoss = true }
-
+	spawnEntry.name = spawnEntry.name or "The Shape"
+	
 	self:SetShouldServerRagdoll( true )
 	local ragdoll = self:BecomeRagdoll( dmginfo )
 	if not IsValid( ragdoll ) then return end
