@@ -18,6 +18,11 @@ terminator_Extras.RegisterNPC( "terminator_nextbot_the_shape", ENT, {
 	AdminOnly = true,
 } )
 
+ENT.MyWorkshopContentIds = {
+    "3831303319", -- bot
+    
+}
+
 if CLIENT then return end
 
 ENT.WalkSpeed = 135
